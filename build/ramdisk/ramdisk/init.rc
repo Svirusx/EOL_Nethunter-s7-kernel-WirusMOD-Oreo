@@ -696,6 +696,9 @@ on post-fs-data
 	restorecon /sys/kernel/debug/tracing/trace_marker
 # ] SEC_SELINUX_PORTING_COMMON
 
+# smart switch mobile
+    mkdir /efs/ssm 0770 system system
+
     # If there is no post-fs-data action in the init.<device>.rc file, you
     # must uncomment this line, otherwise encrypted filesystems
     # won't work.
