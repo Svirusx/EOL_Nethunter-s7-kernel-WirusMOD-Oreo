@@ -32,6 +32,6 @@ debug.atrace.tags.enableflags=0
 #
 # BOOTIMAGE_BUILD_PROPERTIES
 #
-ro.bootimage.build.date=Mon Oct 15 14:53:12 KST 2018
-ro.bootimage.build.date.utc=1539582792
-ro.bootimage.build.fingerprint=samsung/hero2ltexx/hero2lte:8.0.0/R16NW/G935FXXS3ERJA:user/test-keys
+ro.bootimage.build.date=Thu Oct 25 15:21:03 KST 2018
+ro.bootimage.build.date.utc=1540448463
+ro.bootimage.build.fingerprint=samsung/hero2ltexx/hero2lte:8.0.0/R16NW/G935FXXU3ERJE:user/test-keys
