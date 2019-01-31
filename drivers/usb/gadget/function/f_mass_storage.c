@@ -2844,6 +2844,7 @@ static void fsg_common_release(struct kref *ref)
 		for (; i; --i, ++lun) {
       device_remove_file(&lun->dev, &dev_attr_cdrom);
 			device_remove_file(&lun->dev, &dev_attr_nofua);
+			device_remove_file(&lun->dev, &dev_attr_cdrom);
 			device_remove_file(&lun->dev,
 					   lun->cdrom
 					 ? &dev_attr_ro_cdrom
