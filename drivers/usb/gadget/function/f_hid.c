@@ -201,8 +201,6 @@ static struct usb_descriptor_header *hidg_fs_descriptors[] = {
 
 /*-------------------------------------------------------------------------*/
 /*                              Char Device                                */
-// fix for implicit declaration of function 'free_ep_req'
-void free_ep_req(struct usb_ep *ep, struct usb_request *req);
 static ssize_t f_hidg_read(struct file *file, char __user *buffer,
 			size_t count, loff_t *ptr)
 {
@@ -874,10 +872,4 @@ void ghid_cleanup(void)
 
 	class_destroy(hidg_class);
 	hidg_class = NULL;
-}
-// fix for implicit declaration of function 'free_ep_req'
-void free_ep_req(struct usb_ep *ep, struct usb_request *req)
-{
-	kfree(req->buf);
-	usb_ep_free_request(ep, req);
 }

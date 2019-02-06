@@ -22,7 +22,7 @@ KERNELCONFIG=$WORK/arch/arm64/configs/build_defconfig
 KEEP=no
 SILENT=no
 BUILD930=yes
-BUILD935=yes
+BUILD935=no
 
 ########################################################################################################################################################
 # Functions
