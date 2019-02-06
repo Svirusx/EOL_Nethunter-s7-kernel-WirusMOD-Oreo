@@ -120,16 +120,17 @@ do {	\
 };
 #endif /* CONFIG_MMC_DW_IDMAC */
 
-#if defined(CONFIG_MMC_DW_DEBUG)
-static struct dw_mci_debug_data dw_mci_debug __cacheline_aligned;
-
-unsigned int dw_mci_debug_flag = 0;
-
 #ifdef CONFIG_MMC_SUPPORT_STLOG
 #include <linux/stlog.h>
 #else
 #define ST_LOG(fmt,...)
 #endif
+
+#if defined(CONFIG_MMC_DW_DEBUG)
+static struct dw_mci_debug_data dw_mci_debug __cacheline_aligned;
+
+unsigned int dw_mci_debug_flag = 0;
+
 
 /* Add sysfs for read cmd_logs */
 static ssize_t dw_mci_debug_log_show(struct device *dev,
@@ -1451,9 +1452,11 @@ static void mci_send_cmd(struct dw_mci_slot *slot, u32 cmd, u32 arg)
 		"Timeout sending command (cmd %#x arg %#x status %#x)\n",
 		cmd, arg, cmd_status);
 
+#ifdef CONFIG_MMC_DW_DEBUG
 	/* Debuggin for interrupt storming */
 	dw_mci_debug_flag = 1;
 	dw_mci_reg_dump(host);
+#endif
 }
 
 static bool dw_mci_wait_data_busy(struct dw_mci *host, struct mmc_request *mrq)
@@ -2893,10 +2896,10 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 
 	status = mci_readl(host, RINTSTS);
 	pending = mci_readl(host, MINTSTS); /* read-only mask reg */
-
+#ifdef CONFIG_MMC_DW_DEBUG
 	if (dw_mci_debug_flag == 1)
 		dev_err(host->dev, "## RINTSTS 0x %08x\n", pending);
-
+#endif
 	/*
 	 * DTO fix - version 2.10a and below, and only if internal DMA
 	 * is configured.

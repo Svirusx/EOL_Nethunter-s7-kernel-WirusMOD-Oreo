@@ -838,7 +838,7 @@ int exynos_ss_prepare_panic(void)
 
         if (busmon_get_panic() == true) {
 		pr_emerg("[%s]### before run : dhd_dongle_mem_dump()\n", __func__);
-		dhd_dongle_mem_dump();
+		//dhd_dongle_mem_dump();
 		pr_emerg("[%s]### after  run : dhd_dongle_mem_dump()\n", __func__);
         }
 
