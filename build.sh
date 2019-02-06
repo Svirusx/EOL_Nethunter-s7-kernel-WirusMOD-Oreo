@@ -6,12 +6,12 @@
 
 # Set Variables
 export RDIR=$(pwd)
-export KERNELNAME=TGPKernel
+export KERNELNAME=WirusMOD_TGPKernel
 export VERSION_NUMBER=$(<build/version)
 export ARCH=arm64
 export SUBARCH=arm64
 export PLATFORM_VERSION=8.0.0
-export BUILD_CROSS_COMPILE=~/android/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export BUILD_CROSS_COMPILE=~/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 WORK=.work
 WORKDIR=$RDIR/$WORK
