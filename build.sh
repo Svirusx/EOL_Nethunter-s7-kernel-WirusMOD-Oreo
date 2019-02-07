@@ -6,7 +6,7 @@
 
 # Set Variables
 export RDIR=$(pwd)
-export KERNELNAME=WirusMOD_TGPKernel
+export KERNELNAME=WirusMODv1.0_TGPNethunter
 export VERSION_NUMBER=$(<build/version)
 export ARCH=arm64
 export SUBARCH=arm64
