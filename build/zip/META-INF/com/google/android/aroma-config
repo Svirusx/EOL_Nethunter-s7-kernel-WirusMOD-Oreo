@@ -115,7 +115,6 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 		"Magisk", "", 1,
 		"No Root", "", 0,
 		"<#ffffcc>Splash Screen Options</#>", "", 2,
-		"Install TGPKernel Splash Screen", "", 0,
 		"Install Stock Splash Screen", "", 0,
 		"Keep Current Splash Screen", "", 1
 	);
