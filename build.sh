@@ -6,12 +6,12 @@
 
 # Set Variables
 export RDIR=$(pwd)
-export KERNELNAME=WirusMODv1.0_TGPNethunter
+export KERNELNAME=WirusMODv1.0_Nethunter
 export VERSION_NUMBER=$(<build/version)
 export ARCH=arm64
 export SUBARCH=arm64
 export PLATFORM_VERSION=8.0.0
-export BUILD_CROSS_COMPILE=/home/wirusx/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export BUILD_CROSS_COMPILE=/home/svirusx/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 WORK=.work
 WORKDIR=$RDIR/$WORK
@@ -22,7 +22,7 @@ KERNELCONFIG=$WORK/arch/arm64/configs/build_defconfig
 KEEP=no
 SILENT=no
 BUILD930=yes
-BUILD935=no
+BUILD935=yes
 
 ########################################################################################################################################################
 # Functions
@@ -108,6 +108,17 @@ if [ $SILENT = "no" ]; then
 else
 	make -s -C $RDIR O=$WORK -j$BUILD_JOB_NUMBER ARCH=$ARCH CROSS_COMPILE=$BUILD_CROSS_COMPILE || exit -1
 fi
+# Move generated modules
+
+if [ $MODEL = "S7" ]; then
+MODULESDIR=S7Modules
+else
+MODULESDIR=S7EDGEModules
+fi
+sleep 5
+mkdir $RDIR/.output/$MODULESDIR/
+find . -name "*.ko"  -exec cp {} $RDIR/.output/$MODULESDIR/ \;
+# END Move generated modules
 echo ""
 echo "Compiling Ramdisk ..."
 sudo cp $WORKDIR/arch/$ARCH/boot/Image $WORKDIR/ramdisk/split_img/boot.img-zImage
@@ -122,6 +133,7 @@ fi
 	cd $WORKDIR/ramdisk
 	./repackimg.sh
 echo ""
+
 }
 
 # Build boot.img Function
@@ -148,7 +160,7 @@ FUNC_CLEAN
 FUNC_COPY
 KERNELCONFIG=$WORK/arch/arm64/configs/exynos8890-hero2lte_defconfig
 make -C $RDIR O=$WORK -j$BUILD_JOB_NUMBER ARCH=$ARCH CROSS_COMPILE=$BUILD_CROSS_COMPILE ../../../$KERNELCONFIG || exit -1
-mv -f $WORKDIR/.config $RDIR/arch/arm64/configs/exynos8890-hero2lte_defconfig
+mv -Rf $WORKDIR/.config $RDIR/arch/arm64/configs/exynos8890-hero2lte_defconfig
 # Clean up
 FUNC_CLEAN
 exit
