@@ -6,8 +6,8 @@
 
 # Set Variables
 export RDIR=$(pwd)
-export KERNELNAME=WirusMODv1.0_Nethunter
-export VERSION_NUMBER=$(<build/version)
+export KERNELNAME=Nethunter.WirusMOD
+export VERSION_NUMBER=$(build)1.0
 export ARCH=arm64
 export SUBARCH=arm64
 export PLATFORM_VERSION=8.0.0
