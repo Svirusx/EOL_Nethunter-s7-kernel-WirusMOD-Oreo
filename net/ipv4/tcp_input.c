@@ -424,7 +424,8 @@ static void tcp_grow_window(struct sock *sk, const struct sk_buff *skb)
 			meta_tp->rcv_ssthresh = min(meta_tp->rcv_ssthresh + incr,
 					            meta_tp->window_clamp);
 #else
-			tp->rcv_ssthresh += min(room, incr);
+			tp->rcv_ssthresh = min(tp->rcv_ssthresh + incr,
+					       tp->window_clamp);
 #endif
 			inet_csk(sk)->icsk_ack.quick |= 1;
 		}
