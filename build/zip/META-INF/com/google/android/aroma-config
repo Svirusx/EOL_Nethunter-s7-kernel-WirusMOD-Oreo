@@ -80,14 +80,14 @@ if (prop("backup.prop","install")=="1") then
 	"Press the </#><b>Next</b> <#99cccc>button, then select </#><b>Yes</b> <#99cccc>or</#> <b>No</b> <#99cccc>on the Popup Dialog Box.</#>"
 	);
 	textbox(
-	"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+	"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 	" ",
 	"@deafult",
 	getvar("backup_text")
 	);
 	if
 		confirm(
-		"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+		"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 		"Would you like to use your current saved configuration?",
 		"@default"
 		)=="yes"
@@ -103,7 +103,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # INSTALL OPTIONS
 # ---------------
 	selectbox(
-		"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+		"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 		"<#99ccff>        Please select from the following options</#>",
 		"",
 		"tgp.prop",
@@ -139,7 +139,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # MAIN OPTIONS - INSTALL APPS
 # ---------------------------
 	checkbox(
-		"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+		"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 		"<#99ccff>        Please select from the following options</#>",
 		"",
 		"main.prop",
@@ -165,7 +165,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # MAIN OPTIONS - KERNEL OPTIONS
 # -----------------------------
 	checkbox(
-		"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+		"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 		"<#99ccff>        Please select from the following options</#>",
 		"",
 		"main2.prop",
@@ -204,7 +204,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 1 - CPU GOVERNORS (BIG)
 # -------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"governor-big.prop",
@@ -248,7 +248,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 2 - CPU GOVERNORS (LITTLE)
 # ----------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"governor-little.prop",
@@ -292,7 +292,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 3 - MAX CPU RATE (BIG)
 # ------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"cpumax-big.prop",
@@ -327,7 +327,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 4 - MIN CPU RATE (BIG)
 # ------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"cpumin-big.prop",
@@ -362,7 +362,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 5 - MAX CPU RATE (LITTLE)
 # ---------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"cpumax-little.prop",
@@ -389,7 +389,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 6 - MIN CPU RATE (LITTLE)
 # ---------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"cpumin-little.prop",
@@ -416,7 +416,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 7 - MAX GPU RATE
 # ------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"gpumax.prop",
@@ -435,7 +435,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 8 - MIN GPU RATE
 # ------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"gpumin.prop",
@@ -454,7 +454,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 9 - IO SCHEDULERS (INTERNAL)
 # ------------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"scheduler-internal.prop",
@@ -477,7 +477,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 10 - IO SCHEDULERS (INTERNAL)
 # -------------------------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"scheduler-external.prop",
@@ -500,7 +500,7 @@ if (prop("tgpkernel-restore.prop","install")=="0") then
 # ADVANCED PAGE 11 - CONGESTORS
 # -----------------------------
 		form(
-			"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+			"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 			"<#99ccff>        Please select from the following options</#>",
 			"",
 			"tcp.prop",
@@ -533,7 +533,7 @@ endif;
 ini_set("text_next", "Install");
 ini_set("icon_next", "@installbutton");
 viewbox(
-	"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+	"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 	"TGPKernel is ready to be installed.\n\n"+
 	"Press the Install button to begin the installation.\n\n"+
 	"To review or change any of your settings, press the Back button.",
@@ -547,7 +547,7 @@ ini_set("text_next", "Finish");
 ini_set("icon_next", "@finish");
 setvar("retstatus",
 install(
-	"<#ffffff>TGPKERNEL FOR S7 / S7 EDGE</#>",
+	"<#ffffff>NETHUNTER FOR S7 / S7 EDGE</#>",
 	"<#99ccff>            The Kernel is now being installed</#>",
 	"",
 	"<#99ccff>            The Kernel has now been installed</#>"
