@@ -4,6 +4,8 @@ SUBLEVEL = 140
 EXTRAVERSION =
 NAME = Diseased Newt
 
+export ANDROID_MAJOR_VERSION=o
+
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
 # More info can be located in ./README
@@ -247,8 +249,8 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
 # "make" in the configured kernel build directory always uses that.
 # Default value for CROSS_COMPILE is not to prefix executables
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
-ARCH            ?= $ARCH
-CROSS_COMPILE   ?= $(CCACHE) $BUILD_CROSS_COMPILE
+ARCH            ?= arm64
+CROSS_COMPILE   ?= /home/svirusx/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 CCACHE := ccache
 
 # Architecture as present in compile.h
