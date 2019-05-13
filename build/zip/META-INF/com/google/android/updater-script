@@ -84,24 +84,24 @@ ui_print(" ");
 # ------------
 if file_getprop("/tmp/aroma/g930x.prop","install") == "1" then
 	if file_getprop("/tmp/aroma/check_s7.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7</#>");
 	endif;
 	if file_getprop("/tmp/aroma/check_s9port.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7 (S9 Port)</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7 (S9 Port)</#>");
 	endif;
 	if file_getprop("/tmp/aroma/check_n8port.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7 (N8 Port)</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7 (N8 Port)</#>");
 	endif;
 endif;
 if file_getprop("/tmp/aroma/g935x.prop","install") == "1" then
 	if file_getprop("/tmp/aroma/check_s7.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7 Edge</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7 Edge</#>");
 	endif;
 	if file_getprop("/tmp/aroma/check_s9port.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7 Edge (S9 Port)</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7 Edge (S9 Port)</#>");
 	endif;
 	if file_getprop("/tmp/aroma/check_n8port.prop","install") == "1" then
-		ui_print("<#ffffcc>Flashing TGPKernel for S7 Edge (N8 Port)</#>");
+		ui_print("<#ffffcc>Flashing Nethunter for S7 Edge (N8 Port)</#>");
 	endif;
 endif;
 run_program("/tmp/aroma/tgpkernel.sh", "kernel_flash");
