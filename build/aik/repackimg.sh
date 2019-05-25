@@ -108,6 +108,8 @@ else
   echo "Packing ramdisk$sumsg...";
   echo " ";
   test -z "$level" -a "$ramdiskcomp" = "xz" && level=-1;
+
+  ramdiskcomp="xz";
   echo "Using compression: $ramdiskcomp$lvltxt";
   repackcmd="$ramdiskcomp $level";
   compext=$ramdiskcomp;
