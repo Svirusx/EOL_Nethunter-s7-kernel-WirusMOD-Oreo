@@ -175,6 +175,10 @@ static struct backing_dev_info aio_fs_backing_dev_info = {
 	.capabilities   = BDI_CAP_NO_ACCT_AND_WRITEBACK | BDI_CAP_MAP_COPY,
 };
 
+#ifdef CONFIG_RKP_NS_PROT
+extern void rkp_set_mnt_flags(struct vfsmount *mnt, int flags);
+#endif
+
 static struct file *aio_private_file(struct kioctx *ctx, loff_t nr_pages)
 {
 	struct qstr this = QSTR_INIT("[aio]", 5);
@@ -230,8 +234,11 @@ static int __init aio_setup(void)
 	aio_mnt = kern_mount(&aio_fs);
 	if (IS_ERR(aio_mnt))
 		panic("Failed to create aio fs mount.");
+#ifdef CONFIG_RKP_NS_PROT
+	rkp_set_mnt_flags(aio_mnt, MNT_NOEXEC);
+#else
 	aio_mnt->mnt_flags |= MNT_NOEXEC;
-
+#endif
 	if (bdi_init(&aio_fs_backing_dev_info))
 		panic("Failed to init aio fs backing dev info.");
 
@@ -1260,10 +1267,10 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
  *	Create an aio_context capable of receiving at least nr_events.
  *	ctxp must not point to an aio_context that already exists, and
  *	must be initialized to 0 prior to the call.  On successful
- *	creation of the aio_context, *ctxp is filled in with the resulting 
+ *	creation of the aio_context, *ctxp is filled in with the resulting
  *	handle.  May fail with -EINVAL if *ctxp is not initialized,
- *	if the specified nr_events exceeds internal limits.  May fail 
- *	with -EAGAIN if the specified nr_events exceeds the user's limit 
+ *	if the specified nr_events exceeds internal limits.  May fail
+ *	with -EAGAIN if the specified nr_events exceeds the user's limit
  *	of available events.  May fail with -ENOMEM if insufficient kernel
  *	resources are available.  May fail with -EFAULT if an invalid
  *	pointer is passed for ctxp.  Will fail with -ENOSYS if not
@@ -1300,7 +1307,7 @@ out:
 }
 
 /* sys_io_destroy:
- *	Destroy the aio_context specified.  May cancel any outstanding 
+ *	Destroy the aio_context specified.  May cancel any outstanding
  *	AIOs and block on completion.  Will fail with -ENOSYS if not
  *	implemented.  May fail with -EINVAL if the context pointed to
  *	is invalid.
@@ -1370,11 +1377,16 @@ static ssize_t aio_setup_single_vector(struct kiocb *kiocb,
 				       unsigned long *nr_segs,
 				       struct iovec *iovec)
 {
-	if (unlikely(!access_ok(!rw, buf, kiocb->ki_nbytes)))
+	size_t len = kiocb->ki_nbytes;
+
+	if (len > MAX_RW_COUNT)
+		len = MAX_RW_COUNT;
+
+	if (unlikely(!access_ok(!rw, buf, len)))
 		return -EFAULT;
 
 	iovec->iov_base = buf;
-	iovec->iov_len = kiocb->ki_nbytes;
+	iovec->iov_len = len;
 	*nr_segs = 1;
 	return 0;
 }

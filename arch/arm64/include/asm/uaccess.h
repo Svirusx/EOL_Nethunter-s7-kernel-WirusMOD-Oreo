@@ -147,7 +147,11 @@ static inline void __uaccess_ttbr0_disable(void)
 	write_sysreg(ttbr + SWAPPER_DIR_SIZE, ttbr0_el1);
 	isb();
 	/* Set reserved ASID */
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
 	write_sysreg(ttbr, ttbr1_el1);
+#else
+	write_sysreg_with_tlbi(ttbr, ttbr1_el1);
+#endif
 	isb();
 	local_irq_restore(flags);
 }
@@ -168,7 +172,11 @@ static inline void __uaccess_ttbr0_enable(void)
 	ttbr1 = read_sysreg(ttbr1_el1);
 	ttbr1 &= ~TTBR_ASID_MASK;		/* safety measure */
 	ttbr1 |= ttbr0 & TTBR_ASID_MASK;
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
 	write_sysreg(ttbr1, ttbr1_el1);
+#else
+	write_sysreg_with_tlbi(ttbr1, ttbr1_el1);
+#endif
 	isb();
 
 	/* Restore user page table */
@@ -462,7 +470,15 @@ extern __must_check long strnlen_user(const char __user *str, long n);
 	msr	ttbr0_el1, \tmp1		// set reserved TTBR0_EL1
 	isb
 	sub	\tmp1, \tmp1, #SWAPPER_DIR_SIZE
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
+	msr	ttbr1_el1, \tmp1
+#else
+	tlbi	vae1, xzr
+	dsb	nsh
+	tlbi	vae1, xzr
 	msr	ttbr1_el1, \tmp1		// set reserved ASID
+	tlbi	vae1, xzr
+#endif
 	isb
 	.endm
 
@@ -472,7 +488,15 @@ extern __must_check long strnlen_user(const char __user *str, long n);
 	mrs	\tmp2, ttbr1_el1
 	extr    \tmp2, \tmp2, \tmp1, #48
 	ror     \tmp2, \tmp2, #16
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
+	msr	ttbr1_el1, \tmp2
+#else
+	tlbi	vae1, xzr
+	dsb	nsh
+	tlbi	vae1, xzr
 	msr	ttbr1_el1, \tmp2		// set the active ASID
+	tlbi	vae1, xzr
+#endif
 	isb
 	msr	ttbr0_el1, \tmp1		// set the non-PAN TTBR0_EL1
 	isb

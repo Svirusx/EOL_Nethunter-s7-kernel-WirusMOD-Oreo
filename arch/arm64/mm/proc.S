@@ -113,6 +113,7 @@ ENTRY(cpu_do_resume)
 	ubfx	x11, x11, #1, #1
 	msr	oslar_el1, x11
 	mov	x0, x12
+	tlbi	vmalle1
 	dsb	nsh		// Make sure local tlb invalidation completed
 	isb
 	ret
@@ -133,7 +134,11 @@ ENTRY(cpu_do_switch_mm)
 	bfi	x0, x1, #48, #16		// set the ASID field in TTBR0
 #endif
 	bfi	x2, x1, #48, #16		// set the ASID
+	tlbi	vae1, xzr
+	dsb	nsh
+	tlbi	vae1, xzr
 	msr	ttbr1_el1, x2			// in TTBR1 (since TCR.A1 is set)
+	tlbi	vae1, xzr
 	isb
 	msr	ttbr0_el1, x0			// now update TTBR0
 	isb
@@ -207,9 +212,9 @@ ENDPROC(__cpu_setup)
 	 *       CE0      XWHW CZ     ME TEEA S
 	 * .... .IEE .... NEAI TE.I ..AD DEN0 ACAM
 	 * 0011 0... 1101 ..0. ..0. 10.. .... .... < hardware reserved
-	 * .... .1.. .... 01.1 11.1 ..01 0001 1101 < software settings
+	 * .... .1.. .... 01.1 01.1 ..01 0001 1101 < software settings
 	 */
 	.type	crval, #object
 crval:
 	.word	0x000802e2			// clear
-	.word	0x0405d11d			// set
+	.word	0x0405511d			// set

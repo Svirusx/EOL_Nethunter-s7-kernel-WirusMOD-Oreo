@@ -326,3 +326,4 @@ ENTRY(__kernel_clock_getres)
 	.quad	CLOCK_COARSE_RES
 	.cfi_endproc
 ENDPROC(__kernel_clock_getres)
+

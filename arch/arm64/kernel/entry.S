@@ -35,6 +35,9 @@
 #include <asm/asm-uaccess.h>
 #include <asm/unistd.h>
 
+#ifdef CONFIG_RKP_CFP
+#include <asm/rkp_cfp.h>
+#endif
 /*
  * Context tracking subsystem.  Used to instrument transitions
  * between user and kernel mode.
@@ -82,10 +85,32 @@ alternative_if ARM64_UNMAP_KERNEL_AT_EL0
 	mov	x30, xzr
 	.endif
 	.endif
+#ifdef CONFIG_SOC_EXYNOS8890
+	.if     \regsize == 32
+	.if     \el == 0
+	msr     cntp_cval_el0, x0
+	mov     x0, sp
+	lsr     x0, x0, #12
+	tlbi    vaae1, x0
+	dsb     nsh
+	mrs     x0, cntp_cval_el0
+	.endif
+	.endif
+#endif
+
 alternative_else_nop_endif
 #endif
 
 	sub	sp, sp, #S_FRAME_SIZE
+	.if     \el == 0
+	stp     x0, x1, [sp, #16 * 0]
+	stp     x2, x3, [sp, #16 * 1]
+	mrs     x0, elr_el1
+	mrs     x1, esr_el1
+	mrs     x2, spsr_el1
+	mrs     x3, far_el1
+	.endif
+
 	b	el\()\el\()_\label
 	.endm
 
@@ -95,9 +120,19 @@ alternative_else_nop_endif
 	.endm
 
 	.macro	kernel_entry, el, regsize = 64
-	.if	\regsize == 32
-	mov	w0, w0				// zero upper 32 bits of x0
+	.if     \el == 0
+	msr     elr_el1, x0
+	msr     esr_el1, x1
+	msr     spsr_el1, x2
+	msr     far_el1, x3
+	ldp     x0, x1, [sp, #16 * 0]
+	ldp     x2, x3, [sp, #16 * 1]
 	.endif
+
+	.if     \regsize == 32
+	mov     w0, w0                          // zero upper 32 bits of x0
+	.endif
+
 	stp	x0, x1, [sp, #16 * 0]
 	stp	x2, x3, [sp, #16 * 1]
 	stp	x4, x5, [sp, #16 * 2]
@@ -107,6 +142,11 @@ alternative_else_nop_endif
 	stp	x12, x13, [sp, #16 * 6]
 	stp	x14, x15, [sp, #16 * 7]
 	stp	x16, x17, [sp, #16 * 8]
+#ifdef CONFIG_RKP_CFP_ROPP
+	.if	\el == 1
+	mov	RRK, xzr
+	.endif
+#endif
 	stp	x18, x19, [sp, #16 * 9]
 	stp	x20, x21, [sp, #16 * 10]
 	stp	x22, x23, [sp, #16 * 11]
@@ -119,8 +159,32 @@ alternative_else_nop_endif
 	mov	tsk, sp
 	and	tsk, tsk, #~(THREAD_SIZE - 1)	// Ensure MDSCR_EL1.SS is clear,
 	ldr	x19, [tsk, #TI_FLAGS]		// since we can unmask debug
-	disable_step_tsk x19, x20		// exceptions when scheduling.
+#ifdef CONFIG_RKP_CFP_ROPP
+#ifdef CONFIG_RKP_CFP_ROPP_HYPKEY
+	push	x29, x30
+	push	x0, x1
+	mov	x0, #0x1000
+	movk	x0, #0x8389, lsl #16
+	mov	x1, tsk
+	add	x1, x1, #TI_RRK
+	bl	rkp_call
+	pop	x0, x1
+	pop	x29, x30
+#elif defined (CONFIG_RKP_CFP_ROPP_RANDOM_KEY)
+	mrs	RRK, CNTPCT_EL0
+	str	RRK, [tsk, #TI_RRK]
+#else
+	mov	RRK, #0
+	str	RRK, [tsk, #TI_RRK]
+#endif
+#endif
+        disable_step_tsk x19, x20		// exceptions when scheduling.
 	.else
+	/* From el1, don't change key as need for reencrypt*/
+#ifdef CONFIG_RKP_CFP_ROPP
+	get_thread_info tsk //Needed for load key
+	load_key 	tsk
+#endif
 	add	x21, sp, #S_FRAME_SIZE
 	get_thread_info tsk
 	/* Save the task's original addr_limit and set USER_DS (TASK_SIZE_64) */
@@ -238,11 +302,21 @@ alternative_else_nop_endif
 
 #ifdef CONFIG_ARM64_ERRATUM_845719
 alternative_if ARM64_WORKAROUND_845719
+#ifdef CONFIG_SOC_EXYNOS8890
+	mrs	x29, midr_el1
+	lsr	x29, x29, #0x04
+	and	x29, x29, #0xfff
+	cmp	x29, #0xd03
+	b.ne	5f
+#endif
 #ifdef CONFIG_PID_IN_CONTEXTIDR
 	mrs	x29, contextidr_el1
 	msr	contextidr_el1, x29
 #else
 	msr contextidr_el1, xzr
+#endif
+#ifdef CONFIG_SOC_EXYNOS8890
+5:
 #endif
 alternative_else_nop_endif
 #endif
@@ -313,7 +387,11 @@ tsk	.req	x28		// current thread_info
  */
 
 	.align	11
+#ifdef CONFIG_RKP_CFP_JOPP
+VECTOR_ENTRY(vectors)
+#else
 ENTRY(vectors)
+#endif
 	kernel_ventry	1, sync_invalid			// Synchronous EL1t
 	kernel_ventry	1, irq_invalid			// IRQ EL1t
 	kernel_ventry	1, fiq_invalid			// FIQ EL1t
@@ -429,6 +507,14 @@ el1_da:
 	 */
 	mrs	x3, far_el1
 	enable_dbg
+
+	/*
+	 * tlb conflict handling
+	*/
+	and 	x24, x1, #ESR_EL1_ISS_DFSC_MASK
+	cmp     x24, #ESR_EL1_ISS_DFSC_TLB_CONFLICT
+	b.eq	el1_da_tlb_conflict
+
 	// re-enable interrupts if they were enabled in the aborted context
 	tbnz	x23, #7, 1f			// PSR_I_BIT
 	enable_irq
@@ -439,6 +525,10 @@ el1_da:
 
 	// disable interrupts before pulling preserved data off the stack
 	disable_irq
+	kernel_exit 1
+el1_da_tlb_conflict:
+	tlbi vmalle1
+	dsb nsh
 	kernel_exit 1
 el1_sp_pc:
 	/*
@@ -872,7 +962,16 @@ __ni_sys_trace:
 	mrs	\tmp, ttbr1_el1
 	sub	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
 	bic	\tmp, \tmp, #USER_ASID_FLAG
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
+	msr     ttbr1_el1, \tmp
+#else
+	tlbi	vae1, xzr
+	dsb	nsh
+	tlbi	vae1, xzr
 	msr	ttbr1_el1, \tmp
+	tlbi	vae1, xzr
+#endif
+	isb
 #ifdef CONFIG_ARCH_MSM8996
 	/* ASID already in \tmp[63:48] */
 	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS >> 12)
@@ -889,7 +988,16 @@ __ni_sys_trace:
 	mrs	\tmp, ttbr1_el1
 	add	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
 	orr	\tmp, \tmp, #USER_ASID_FLAG
+#ifdef CONFIG_REMOVE_M1_TLBI_ERRATUM_FOR_TVM
+	msr     ttbr1_el1, \tmp
+#else
+	tlbi	vae1, xzr
+	dsb	nsh
+	tlbi	vae1, xzr
 	msr	ttbr1_el1, \tmp
+	tlbi	vae1, xzr
+#endif
+	isb
 	/*
 	 * We avoid running the post_ttbr_update_workaround here because the
 	 * user and kernel ASIDs don't have conflicting mappings, so any
@@ -936,6 +1044,8 @@ __ni_sys_trace:
 	tramp_unmap_kernel	x30
 	.if	\regsize == 64
 	mrs	x30, far_el1
+	.else
+	dsb	nsh
 	.endif
 	eret
 	.endm

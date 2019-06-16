@@ -24,6 +24,7 @@
 #include <asm/cpu.h>
 #include <asm/cpufeature.h>
 #include <asm/cpu_ops.h>
+#include <asm/smp_plat.h>
 #include <asm/processor.h>
 #include <asm/sysreg.h>
 
@@ -480,6 +481,15 @@ void update_cpu_features(int cpu,
 {
 	int taint = 0;
 
+#ifdef CONFIG_SOC_EXYNOS8890
+	/*
+	* HACK: In Exynos8890, the sanity check for cluster '0' is meaningless
+	* because it consists of non-arm CPUs.
+	*/
+	if (!MPIDR_AFFINITY_LEVEL(cpu_logical_map(cpu), 1))
+		return;
+#endif
+
 	/*
 	 * The kernel can handle differing I-cache policies, but otherwise
 	 * caches should look identical. Userspace JITs will make use of
@@ -630,7 +640,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry)
 	}
 
 	/* Useful for KASLR robustness */
-	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) || IS_ENABLED(CONFIG_RELOCATABLE_KERNEL))
 		return true;
 
 	return false;
