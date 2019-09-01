@@ -1,6 +1,6 @@
 #!/sbin/sh
 # ------------------------------
-# TGPKERNEL INSTALLER 4.11.8
+# TGPKERNEL INSTALLER 4.11.9
 # Created by @djb77
 #
 # Credit also goes to @Tkkg1994,
@@ -19,7 +19,6 @@ TGPTEMP=/tmp/tgptemp
 AROMA=/tmp/aroma
 TGP=/data/media/0/TGPKernel
 CONFIG=$TGP/config
-KERNELPATH=$TGPTEMP/kernels
 BUILDPROP=/system/build.prop
 KERNEL_REMOVE="init.services.rc init.PRIME-Kernel.rc init.spectrum.sh init.spectrum.rc init.primal.rc init.noto.rc kernelinit.sh wakelock.sh super.sh cortexbrain-tune.sh spectrum.sh kernelinit.sh spa init_d.sh initd.sh moro-init.sh sysinit.sh tgpkernel.sh noto.sh"
 
@@ -50,14 +49,6 @@ if [ $OPTION == "variant_check" ]; then
 		echo "install=1" > $AROMA/g935x.prop
 	fi
 	rm -f /tmp/variant_model
-	exit 10
-fi
-
-if [ $OPTION == "setup_extract" ]; then
-	## Extract System Files and Kernels
-	cd $TGPTEMP
-	tar -Jxf kernels.tar.xz
-	tar -Jxf system.tar.xz
 	exit 10
 fi
 
@@ -154,9 +145,6 @@ fi
 
 if [ $OPTION == "system_patch" ]; then
 	## System Patches
-	cd $TGPTEMP
-	# Copy system
-	cp -rf system/. /system
 	# Remove unwatned McRegistry entry
 	rm -f /system/app/mcRegistry/ffffffffd00000000000000000000004.tlbin
 	# Clean Apex data
@@ -195,10 +183,10 @@ if [ $OPTION == "kernel_flash" ]; then
 	[ -f /system/xbin/uci ] && rm -f /system/xbin/uci
 	# Flash new Image
 	if grep -q install=1 $AROMA/g930x.prop; then
-		dd if=$KERNELPATH/boot-s7.img of=$BLOCK/BOOT
+		dd if=$TGPTEMP/boot-s7.img of=$BLOCK/BOOT
 	fi
 	if grep -q install=1 $AROMA/g935x.prop; then
-		dd if=$KERNELPATH/boot-s7e.img of=$BLOCK/BOOT
+		dd if=$TGPTEMP/boot-s7e.img of=$BLOCK/BOOT
 	fi
 	sync
 	exit 10
