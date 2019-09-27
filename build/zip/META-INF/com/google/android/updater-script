@@ -1,5 +1,5 @@
 # --------------------------
-# TGPKERNEL INSTALLER 4.11.8
+# TGPKERNEL INSTALLER 4.11.9
 # Created by @djb77
 # --------------------------
 
@@ -43,8 +43,7 @@ ui_print("<#ffffcc>Setting up the Installer</#>");
 # UNPACK FILES
 # ------------
 ui_print("- Unpacking Files");
-package_extract_dir("tgpkernel/files", "/tmp/tgptemp");
-run_program("/tmp/aroma/tgpkernel.sh", "setup_extract");
+package_extract_dir("tgpkernel/kernels", "/tmp/tgptemp");
 
 set_progress(0.30);
 
@@ -112,6 +111,7 @@ set_progress(0.45);
 # ----------------------
 ui_print(" ");
 ui_print("<#ffffcc>Applying System Patches</#>");
+package_extract_dir("tgpkernel/system", "/system");
 run_program("/tmp/aroma/tgpkernel.sh", "system_patch");
 delete_recursive("/tmp/tgptemp");
 
